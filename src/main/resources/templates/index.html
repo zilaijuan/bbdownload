@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Welcome to Download Center</title>
+    <link rel="stylesheet" href="css/bootstrap.css" >
+</head>
+<body>
+<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <h5 class="my-0 mr-md-auto font-weight-normal">Download Center</h5>
+    <nav class="my-2 my-md-0 mr-md-3">
+<!--        <a class="p-2 text-dark" href="tasklist">Task List</a>-->
+<!--        <a class="p-2 text-dark" href="#">Enterprise</a>-->
+<!--        <a class="p-2 text-dark" href="#">Support</a>-->
+<!--        <a class="p-2 text-dark" href="#">Pricing</a>-->
+    </nav>
+    <a class="btn btn-outline-primary" href="tasklist">Task List</a>
+</div>
+<div>
+<!--    <a href="tasklist">任务列表</a>-->
+</div>
+<div class="container">
+    <div class="card-deck mb-3 text-center">
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">VLBA-7mm</h4>
+            </div>
+            <div class="card-body">
+<!--                <h1 class="card-title pricing-card-title">$0 <small class="text-muted">/ mo</small></h1>-->
+                <ul class="list-unstyled mt-3 mb-4">
+
+                        <th:block th:each="sourceName,status:${sourceNames}">
+                            <li>
+                                <a target="_blank" th:href="'details?id='+${sourceName.id}+'&source='+${sourceName.source}" th:text="${sourceName.name}"></a>
+                            </li>
+                        </th:block>
+
+                </ul>
+<!--                <button type="button" class="btn btn-lg btn-block btn-outline-primary">Sign up for free</button>-->
+            </div>
+        </div>
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">VLBA-3mm</h4>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mt-3 mb-4">
+
+                    <th:block th:each="sourceName,status:${sourceNames}">
+                        <li>
+                            <a target="_blank" th:href="'details?id='+${sourceName.id}+'&source='+${sourceName.source}" th:text="${sourceName.name}"></a>
+                        </li>
+                    </th:block>
+
+                </ul>
+            </div>
+        </div>
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">MOJAVE</h4>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mt-3 mb-4">
+
+                    <th:block th:each="sourceName,status:${sourceNames}">
+                        <li>
+                            <a target="_blank" th:href="'details?id='+${sourceName.id}+'&source='+${sourceName.source}" th:text="${sourceName.name}"></a>
+                        </li>
+                    </th:block>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<script src="js/jquery-3.5.1.js"></script>
+<script src="js/bootstrap.bundle.js"></script>
+</body>
+</html>

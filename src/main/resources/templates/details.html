@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Epoch of Source</title>
+    <link rel="stylesheet" href="css/bootstrap.css" >
+</head>
+<body>
+<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <h5 class="my-0 mr-md-auto font-weight-normal">Download Center</h5>
+    <nav class="my-2 my-md-0 mr-md-3">
+        <a class="p-2 text-dark" href="/">Go Back</a>
+    </nav>
+        <a class="btn btn-outline-primary" href="tasklist">Task List</a>
+</div>
+
+<input type="text" id="path" th:value="${path}">
+<button onclick="selectAll()" id="selectAll">全选</button>
+<button onclick="checkrev()" id="">反选</button>
+<button onclick="download()">下载选中项</button>
+<ul id="dd">
+
+    <th:block th:each="sourceDetail,status:${sourceDetails}">
+<!--        <label>-->
+            <li><label>
+                <input type="checkbox" th:value="${sourceDetail.id}">
+                <span th:text="${sourceDetail.epoch}">
+
+                </span></label>
+<!--                <a target="_blank"-->
+<!--                   th:href="'details?id='+${sourceDetail.id}+'&source='+${source}"-->
+<!--                   th:text=""></a>-->
+            </li>
+<!--        </label>-->
+    </th:block>
+</ul>
+<script src="js/jquery-3.5.1.js"></script>
+<script src="js/bootstrap.bundle.js"></script>
+<script>
+    var isCheckedAll=true;
+    function download() {
+        var checkID = [];
+        $("input:checkbox:checked").each(function (i) {
+            checkID[i] = $(this).val();
+        });
+        var path = $("#path").val();
+        $.ajax(
+            {
+                data: {'checkID': checkID, source: "[[${source}]]", path: path,sourceNameID:"[[${sourceNameID}]]"},
+
+                dataType: 'text',
+                success: function (data) {
+                    alert(data);
+                },
+                type: 'post',
+                url: 'download',
+                traditional: true
+            }
+        );
+    }
+    function selectAll() {
+        $('input:checkbox').each(function() {
+            // $(this).attr('checked', isCheckedAll);
+            this.checked=isCheckedAll;
+        });
+        var msg="全选";
+        if(isCheckedAll){
+            msg="取消全选";
+        }
+        isCheckedAll = !isCheckedAll;
+        $("#selectAll").html(msg);
+    }
+
+    function checkrev(){
+        //实现反选功能
+        $('input:checkbox').each(function(){
+            this.checked=!this.checked;
+        });
+    }
+
+</script>
+</body>
+</html>
