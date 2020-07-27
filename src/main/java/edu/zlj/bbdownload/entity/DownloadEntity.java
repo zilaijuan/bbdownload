@@ -12,6 +12,9 @@ public class DownloadEntity {
     private String path;
     private SourceDetail sourceDetail;
     private String filename;
+    private boolean needUnZip;
+    private String project;
+    private String source_name;
 
     public String getUrl() {
         return url;
@@ -44,5 +47,34 @@ public class DownloadEntity {
 
     public void setFilename(String filename) {
         this.filename = filename;
+    }
+
+    public boolean isNeedUnZip() {
+        return needUnZip;
+    }
+
+    public void setNeedUnZip(boolean needUnZip) {
+        this.needUnZip = needUnZip;
+    }
+
+    public String getProject() {
+        return project;
+    }
+
+    public void setProject(String project) {
+        this.project = project;
+    }
+
+    public String getSource_name() {
+        return source_name;
+    }
+
+    public void setSource_name(String source_name) {
+        this.source_name = source_name;
+    }
+
+    @Override
+    public String  toString(){
+        return project+" "+source_name+" "+sourceDetail.getEpoch();
     }
 }

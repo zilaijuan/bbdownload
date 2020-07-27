@@ -13,13 +13,20 @@ public class SourceDetail {
     private String iPeak;
     private String pPeak;
     private String EVPA;
-    private String viewImage;
+    private String d_viewImage;
     //    private String  iMap;
-    private String psFile;
-    private String fitsFile;
-    private String pMap;
-    private String UVdata;
-    private String CLEANModel;
+    private String d_psFile;
+    private String d_fitsFile;
+    private String d_pMap;
+    private String d_UVdata;
+    private String d_CLEANModel;
+
+
+    private String d_image_natweight;
+    private String d_image_tapered;
+    private String d_image_widefield;
+    private String d_image_stokes;
+    private String d_image_poi;
 
     public String getId() {
         return id;
@@ -61,51 +68,91 @@ public class SourceDetail {
         this.EVPA = EVPA;
     }
 
-    public String getViewImage() {
-        return viewImage;
+    public String getD_viewImage() {
+        return d_viewImage;
     }
 
-    public void setViewImage(String viewImage) {
-        this.viewImage = viewImage;
+    public void setD_viewImage(String d_viewImage) {
+        this.d_viewImage = d_viewImage;
     }
 
-    public String getPsFile() {
-        return psFile;
+    public String getD_psFile() {
+        return d_psFile;
     }
 
-    public void setPsFile(String psFile) {
-        this.psFile = psFile;
+    public void setD_psFile(String d_psFile) {
+        this.d_psFile = d_psFile;
     }
 
-    public String getFitsFile() {
-        return fitsFile;
+    public String getD_fitsFile() {
+        return d_fitsFile;
     }
 
-    public void setFitsFile(String fitsFile) {
-        this.fitsFile = fitsFile;
+    public void setD_fitsFile(String d_fitsFile) {
+        this.d_fitsFile = d_fitsFile;
     }
 
-    public String getpMap() {
-        return pMap;
+    public String getD_pMap() {
+        return d_pMap;
     }
 
-    public void setpMap(String pMap) {
-        this.pMap = pMap;
+    public void setD_pMap(String d_pMap) {
+        this.d_pMap = d_pMap;
     }
 
-    public String getUVdata() {
-        return UVdata;
+    public String getD_UVdata() {
+        return d_UVdata;
     }
 
-    public void setUVdata(String UVdata) {
-        this.UVdata = UVdata;
+    public void setD_UVdata(String d_UVdata) {
+        this.d_UVdata = d_UVdata;
     }
 
-    public String getCLEANModel() {
-        return CLEANModel;
+    public String getD_CLEANModel() {
+        return d_CLEANModel;
     }
 
-    public void setCLEANModel(String CLEANModel) {
-        this.CLEANModel = CLEANModel;
+    public void setD_CLEANModel(String d_CLEANModel) {
+        this.d_CLEANModel = d_CLEANModel;
+    }
+
+    public String getD_image_natweight() {
+        return d_image_natweight;
+    }
+
+    public void setD_image_natweight(String d_image_natweight) {
+        this.d_image_natweight = d_image_natweight;
+    }
+
+    public String getD_image_tapered() {
+        return d_image_tapered;
+    }
+
+    public void setD_image_tapered(String d_image_tapered) {
+        this.d_image_tapered = d_image_tapered;
+    }
+
+    public String getD_image_widefield() {
+        return d_image_widefield;
+    }
+
+    public void setD_image_widefield(String d_image_widefield) {
+        this.d_image_widefield = d_image_widefield;
+    }
+
+    public String getD_image_stokes() {
+        return d_image_stokes;
+    }
+
+    public void setD_image_stokes(String d_image_stokes) {
+        this.d_image_stokes = d_image_stokes;
+    }
+
+    public String getD_image_poi() {
+        return d_image_poi;
+    }
+
+    public void setD_image_poi(String d_image_poi) {
+        this.d_image_poi = d_image_poi;
     }
 }

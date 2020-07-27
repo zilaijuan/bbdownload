@@ -1,7 +1,6 @@
 package edu.zlj.bbdownload.service;
 
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.io.FileUtil;
 import edu.zlj.bbdownload.cache.DownloadTaskCache;
 import edu.zlj.bbdownload.cache.SourceCache;
 import edu.zlj.bbdownload.entity.DownloadEntity;
@@ -18,6 +17,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created with IntelliJ IDEA.
@@ -38,14 +39,19 @@ public class DownloadServer {
     @Autowired
     private DownloadTaskCache downloadTaskCache;
 
-    public boolean preDownload(String[] ids, String source, String path, String sourceNameID) {
+    public boolean preDownload(String[] ids, String project, String path, String sourceNameID) {
         if (ids.length == 0) {
             return false;
         }
-        SourceName sourceName = sourceCache.getSourceNameFromCache(source, sourceNameID);
+        SourceName sourceName = sourceCache.getSourceNameFromCache(project, sourceNameID);
         TaskEntity taskEntity = new TaskEntity();
-        taskEntity.setTaskName(source + "_" + sourceName.getName() + "_" + DateUtil.now());
-        File dir = new File(path, source);
+        taskEntity.setTaskName(project + "_" + sourceName.getName() + "_" + DateUtil.now());
+
+        Pattern pattern = Pattern.compile("[\\s\\\\/:\\*\\?\\\"<>\\|]");
+        Matcher matcher = pattern.matcher(sourceName.getName());
+        String subDir= matcher.replaceAll("");
+
+        File dir = new File(path, subDir+ File.separator+project);
         if (!dir.exists()) {
             if (!dir.mkdirs()) {
                 logger.info("can not create dir:[{}]", dir.toString());
@@ -57,7 +63,9 @@ public class DownloadServer {
             DownloadEntity downloadEntity = new DownloadEntity();
             downloadEntity.setPath(dir.toString());
             downloadEntity.setSourceDetail(sourceDetail);
-            downloadEntity.setUrl(sourceDetail.getCLEANModel());
+            downloadEntity.setUrl(sourceDetail.getD_CLEANModel());
+            downloadEntity.setProject(project);
+            downloadEntity.setSource_name(sourceName.getName());
             taskEntity.add(downloadEntity);
         }
 

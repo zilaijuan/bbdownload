@@ -2,12 +2,18 @@ package edu.zlj.bbdownload.task;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.http.HttpUtil;
+import com.google.common.base.Strings;
 import edu.zlj.bbdownload.config.DownloadStatus;
 import edu.zlj.bbdownload.entity.DownloadEntity;
+import edu.zlj.bbdownload.entity.SourceDetail;
 import edu.zlj.bbdownload.entity.TaskEntity;
 import edu.zlj.bbdownload.utils.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.concurrent.Callable;
 
 /**
@@ -18,6 +24,7 @@ import java.util.concurrent.Callable;
  * Time: 15:20
  */
 public class DownloadTask implements Callable<Boolean> {
+    private Logger logger = LoggerFactory.getLogger(DownloadTask.class);
     private TaskEntity taskEntity;
     private DownloadEntity downloadEntity;
 
@@ -28,21 +35,41 @@ public class DownloadTask implements Callable<Boolean> {
 
     @Override
     public Boolean call() throws Exception {
-        int count = 0;
-        while (count < 5) {
-            try {
-
-                HttpUtil.downloadFile(downloadEntity.getUrl(), new File(downloadEntity.getPath(), downloadEntity.getFilename()));
-//                FileUtils.download(downloadEntity.getUrl(), downloadEntity.getPath(),downloadEntity.getFilename());
-                taskEntity.countDown();
-                return true;
-            } catch (Exception e) {
-                e.printStackTrace();
-                count++;
+        SourceDetail sourceDetail = downloadEntity.getSourceDetail();
+        Class<? extends SourceDetail> aClass = sourceDetail.getClass();
+        Field[] declaredFields = aClass.getDeclaredFields();
+        String path = downloadEntity.getPath();
+        boolean flag = true;
+        for (Field declaredField : declaredFields) {
+            String fieldName = declaredField.getName();
+            if (fieldName.startsWith("d_")) {
+                String name = fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+                Method method = aClass.getMethod("get" + name);
+                String url = (String) method.invoke(sourceDetail);
+                String fileName = url.substring(url.lastIndexOf("/"));
+                if(Strings.isNullOrEmpty(url)){
+                    continue;
+                }
+                int count = 0;
+                while (count < 5) {
+                    try {
+                        HttpUtil.downloadFile(url, new File(path, fileName));
+                        flag = true;
+                        break;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        count++;
+                        flag = false;
+                    }
+                }
             }
         }
-        taskEntity.setStatus(DownloadStatus.FAILED);
-
-        return false;
+        if (flag) {
+            taskEntity.countDown();
+        } else {
+            taskEntity.setStatus(DownloadStatus.FAILED);
+            logger.info("download failed......[{}]",downloadEntity);
+        }
+        return flag;
     }
 }

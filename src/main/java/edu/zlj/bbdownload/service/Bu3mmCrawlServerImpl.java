@@ -24,7 +24,7 @@ import java.util.*;
  * Date: 2020-07-22
  * Time: 16:12
  */
-@Service
+@Service("bu3CrawlServer")
 public class Bu3mmCrawlServerImpl implements CrawlServer {
     private Logger logger = LoggerFactory.getLogger(Bu3mmCrawlServerImpl.class);
 
@@ -97,17 +97,17 @@ public class Bu3mmCrawlServerImpl implements CrawlServer {
                 sourceDetail.setiPeak(tds.get(1).text());
                 sourceDetail.setpPeak(tds.get(2).text());
                 sourceDetail.setEVPA(tds.get(3).text());
-                sourceDetail.setViewImage(detailBaseUrl + tds.get(4).child(0).attr("href"));
-                sourceDetail.setPsFile(detailBaseUrl + tds.get(5).child(0).attr("href"));
-                sourceDetail.setFitsFile(detailBaseUrl + tds.get(6).child(0).attr("href"));
+                sourceDetail.setD_viewImage(detailBaseUrl + tds.get(4).child(0).attr("href"));
+                sourceDetail.setD_psFile(detailBaseUrl + tds.get(5).child(0).attr("href"));
+                sourceDetail.setD_fitsFile(detailBaseUrl + tds.get(6).child(0).attr("href"));
                 try {
-                    sourceDetail.setpMap(detailBaseUrl + tds.get(7).child(0).attr("href"));
+                    sourceDetail.setD_pMap(detailBaseUrl + tds.get(7).child(0).attr("href"));
                 } catch (Exception e) {
 //                    e.printStackTrace();
                     logger.info("no ps file;");
                 }
-                sourceDetail.setUVdata(detailBaseUrl + tds.get(8).child(0).attr("href"));
-                sourceDetail.setCLEANModel(detailBaseUrl + tds.get(9).child(0).attr("href"));
+                sourceDetail.setD_UVdata(detailBaseUrl + tds.get(8).child(0).attr("href"));
+                sourceDetail.setD_CLEANModel(detailBaseUrl + tds.get(9).child(0).attr("href"));
 
 
                 sourceDetails.add(sourceDetail);

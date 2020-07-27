@@ -24,7 +24,7 @@ import java.util.*;
  * Date: 2020-07-22
  * Time: 16:12
  */
-@Service
+@Service("moCrawlServer")
 public class MOJAVECrawlServerImpl implements CrawlServer {
     private Logger logger = LoggerFactory.getLogger(MOJAVECrawlServerImpl.class);
 
@@ -32,13 +32,12 @@ public class MOJAVECrawlServerImpl implements CrawlServer {
     private SourceCache sourceCache;
 
     private String url = "http://www.physics.purdue.edu/astro/MOJAVE/allsources.html";
-    private String baseUrl = "https://www.bu.edu/blazars/";
+    private String baseUrl = "http://www.physics.purdue.edu/astro/MOJAVE/";
     private String detailBaseUrl = "https://www.bu.edu/blazars/VLBA_GLAST/";
 
     @Override
     public List<SourceName> getSourceName() {
-        List<SourceName> sourceNames = null;
-//        List<SourceName> sourceNames = sourceCache.getSourceNamesFromCache(Constant.SOURCENAME_MOJAVE);
+        List<SourceName> sourceNames = sourceCache.getSourceNamesFromCache(Constant.SOURCENAME_MOJAVE);
         if (sourceNames == null) {
             sourceNames = new ArrayList<>();
             Map<String, SourceName> sourceNamesMap = new LinkedHashMap<>();
@@ -47,18 +46,20 @@ public class MOJAVECrawlServerImpl implements CrawlServer {
                 String title = doc.title();
                 Elements centers = doc.getElementsByTag("center");
                 for (Element center : centers) {
-                    
+                    Elements as = center.getElementsByTag("a");
+                    for (Element a : as) {
+
+
+                        SourceName sourceName = new SourceName();
+                        sourceName.setName(a.text());
+                        sourceName.setUrl(baseUrl + a.attr("href"));
+                        sourceName.setId(DigestUtil.md5Hex(Constant.SOURCENAME_MOJAVE + a.text()));
+                        sourceName.setSource(Constant.SOURCENAME_MOJAVE);
+                        sourceNames.add(sourceName);
+                        sourceNamesMap.put(sourceName.getId(), sourceName);
+                    }
                 }
-                Elements sources = table.getElementsByTag("a");
-                for (Element source : sources) {
-                    SourceName sourceName = new SourceName();
-                    sourceName.setName(source.text());
-                    sourceName.setUrl(baseUrl + source.attr("href"));
-                    sourceName.setId(DigestUtil.md5Hex(Constant.SOURCENAME_MOJAVE+ source.text()));
-                    sourceName.setSource(Constant.SOURCENAME_MOJAVE);
-                    sourceNames.add(sourceName);
-                    sourceNamesMap.put(sourceName.getId(), sourceName);
-                }
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -86,37 +87,51 @@ public class MOJAVECrawlServerImpl implements CrawlServer {
         try {
             Document doc = Jsoup.connect(detailUrl).get();
             String title = doc.title();
-            Element table = doc.selectFirst("table");
+            Elements tables = doc.select("table");
+            Element table = tables.get(tables.size() - 2);
             Elements trs = table.getElementsByTag("tr");
-            for (Element tr : trs) {
-                Elements tds = tr.getElementsByTag("td");
-                if (tds.size() < 10) {
-                    continue;
-                }
-
+            for (int i = 1; i < trs.size(); i++) {
+                Elements tds = trs.get(i).getElementsByTag("td");
                 SourceDetail sourceDetail = new SourceDetail();
                 sourceDetail.setId(UUID.randomUUID().toString());
                 sourceDetail.setEpoch(tds.get(0).text());
-                sourceDetail.setiPeak(tds.get(1).text());
-                sourceDetail.setpPeak(tds.get(2).text());
-                sourceDetail.setEVPA(tds.get(3).text());
-                sourceDetail.setViewImage(detailBaseUrl + tds.get(4).child(0).attr("href"));
-                sourceDetail.setPsFile(detailBaseUrl + tds.get(5).child(0).attr("href"));
-                sourceDetail.setFitsFile(detailBaseUrl + tds.get(6).child(0).attr("href"));
                 try {
-                    sourceDetail.setpMap(detailBaseUrl + tds.get(7).child(0).attr("href"));
+                    sourceDetail.setD_viewImage(tds.get(6).child(0).attr("href"));
+                    sourceDetail.setD_image_natweight(tds.get(6).child(1).attr("href"));
                 } catch (Exception e) {
-//                    e.printStackTrace();
-                    logger.info("no ps file;");
+                    logger.info("no I Image (Nat. Weight);");
                 }
-                sourceDetail.setUVdata(detailBaseUrl + tds.get(8).child(0).attr("href"));
-                sourceDetail.setCLEANModel(detailBaseUrl + tds.get(9).child(0).attr("href"));
+                try {
+                    sourceDetail.setD_image_tapered(tds.get(7).child(1).attr("href"));
+                } catch (Exception e) {
+                    logger.info("no Tapered I Image;");
+                }
+                try {
+                    sourceDetail.setD_image_widefield(tds.get(8).child(0).attr("href"));
+                } catch (Exception e) {
+                    logger.info("no Tapered I Image (Widefield);");
+                }
+                try {
+                    sourceDetail.setD_UVdata(tds.get(9).child(0).attr("href"));
+                } catch (Exception e) {
+                    logger.info("no Visibility Data;");
+                }
+                try {
+                    sourceDetail.setD_image_stokes(tds.get(10).child(0).attr("href"));
+                } catch (Exception e) {
+                    logger.info("no Stokes I Radplot;");
+                }
+                try {
+                    sourceDetail.setD_image_poi(tds.get(11).child(0).attr("href"));
+                } catch (Exception e) {
+                    logger.info("no Poi Image;");
+                }
 
 
                 sourceDetails.add(sourceDetail);
-                sourceDetailsMap.put(sourceDetail.getId(),sourceDetail);
-
+                sourceDetailsMap.put(sourceDetail.getId(), sourceDetail);
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
