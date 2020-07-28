@@ -49,7 +49,7 @@
             <div class="card-body">
                 <ul class="list-unstyled mt-3 mb-4">
 
-                    <th:block th:each="sourceName,status:${sourceNames}">
+                    <th:block th:each="sourceName,status:${v3sourceNames}">
                         <li>
                             <a target="_blank" th:href="'details?id='+${sourceName.id}+'&source='+${sourceName.source}" th:text="${sourceName.name}"></a>
                         </li>

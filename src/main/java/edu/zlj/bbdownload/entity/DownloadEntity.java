@@ -22,7 +22,7 @@ public class DownloadEntity {
 
     public void setUrl(String url) {
         this.url = url;
-        this.filename = url.substring(url.lastIndexOf("/")+1);
+//        this.filename = url.substring(url.lastIndexOf("/")+1);
     }
 
     public String getPath() {

@@ -1,6 +1,7 @@
 package edu.zlj.bbdownload.task;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.http.HttpException;
 import cn.hutool.http.HttpUtil;
 import com.google.common.base.Strings;
 import edu.zlj.bbdownload.config.DownloadStatus;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.URLEncoder;
 import java.util.concurrent.Callable;
 
 /**
@@ -46,20 +48,35 @@ public class DownloadTask implements Callable<Boolean> {
                 String name = fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
                 Method method = aClass.getMethod("get" + name);
                 String url = (String) method.invoke(sourceDetail);
-                String fileName = url.substring(url.lastIndexOf("/"));
-                if(Strings.isNullOrEmpty(url)){
+
+                if (Strings.isNullOrEmpty(url)) {
                     continue;
                 }
+                String fileName = url.substring(url.lastIndexOf("/"));
                 int count = 0;
-                while (count < 5) {
+                while (true) {
                     try {
                         HttpUtil.downloadFile(url, new File(path, fileName));
-                        flag = true;
+//                        FileUtils.download(url, path, fileName);
                         break;
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        if (e instanceof HttpException) {
+                            HttpException httpException = (HttpException) e;
+                            if (httpException.getMessage().contains("code: [301]")) {
+                                url = url.replace("http", "https");
+                            } else if(httpException.getMessage().contains("code: [404]")) {
+                                url = url.replaceAll("\\+","%2b");
+                            }
+                        }
+
                         count++;
-                        flag = false;
+                        if (count >= 5) {
+                            e.printStackTrace();
+                            flag = false;
+                            logger.info("[error] {}", url);
+                            break;
+
+                        }
                     }
                 }
             }
@@ -68,8 +85,22 @@ public class DownloadTask implements Callable<Boolean> {
             taskEntity.countDown();
         } else {
             taskEntity.setStatus(DownloadStatus.FAILED);
-            logger.info("download failed......[{}]",downloadEntity);
+            logger.info("download failed......[{}]", downloadEntity);
         }
         return flag;
+    }
+
+    public static void main(String[] args) {
+        String url = "https://www.cv.nrao.edu/2cmVLBA/data/0003+380/2013_08_12/0003+380.u.2013_08_12.irad.png";
+//        url="https://www.cv.nrao.edu/2cmVLBA/data/0502+049/2018_08_19/0502+049.u.2018_08_19.ict_color.png";
+        /*try {
+            FileUtils.download(url,"C:\\Users\\Lenovo\\temp\\0219+428(3C66A)\\bu7mm","a.png");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
+//        HttpUtil.downloadFile(url,"C:\\Users\\Lenovo\\temp\\0219+428(3C66A)\\bu7mm\\b.png");
+        String str = HttpUtil.get("https://www.cv.nrao.edu/2cmVLBA/data/0003%2b380/");
+
+        System.out.println("str = " + str);
     }
 }

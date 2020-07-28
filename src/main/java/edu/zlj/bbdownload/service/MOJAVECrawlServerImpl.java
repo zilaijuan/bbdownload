@@ -31,8 +31,8 @@ public class MOJAVECrawlServerImpl implements CrawlServer {
     @Autowired
     private SourceCache sourceCache;
 
-    private String url = "http://www.physics.purdue.edu/astro/MOJAVE/allsources.html";
-    private String baseUrl = "http://www.physics.purdue.edu/astro/MOJAVE/";
+    private String url = "https://www.physics.purdue.edu/astro/MOJAVE/allsources.html";
+    private String baseUrl = "https://www.physics.purdue.edu/astro/MOJAVE/";
     private String detailBaseUrl = "https://www.bu.edu/blazars/VLBA_GLAST/";
 
     @Override

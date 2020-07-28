@@ -44,6 +44,7 @@ public class IndexController {
         List<SourceName> moSourceNames = moCrawlServer.getSourceName();
 
         model.addAttribute("sourceNames", sourceNames);
+        model.addAttribute("v3sourceNames", null);
         model.addAttribute("moSourceNames", moSourceNames);
         return "index";
     }
